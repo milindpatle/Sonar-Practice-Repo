@@ -1,0 +1,50 @@
+pipeline {
+    agent any
+
+    environment {
+        // ✅ Ensure Maven and Sonar are in PATH
+        PATH = "/opt/maven/bin:$PATH"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo "🏗️ Building and compiling Java project"
+                sh 'mvn clean compile -Dmaven.compiler.release=21'
+                echo "📁 Verifying compiled files:"
+                sh 'ls -R target || true'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            environment {
+                // ✅ Use your SonarQube Scanner tool name configured under Global Tool Configuration
+                scannerHome = tool 'SonarQube Scanner Tool'
+            }
+            steps {
+                // ✅ Use your SonarQube server name configured under Manage Jenkins → Configure System
+                withSonarQubeEnv('SonarQubeScannerServer') {
+                    echo "🚀 Running SonarQube Scanner..."
+                    sh """
+                        ${scannerHome}/bin/sonar-scanner \
+                          -Dsonar.java.binaries=target/classes \
+                          -Dsonar.projectKey=milind-patle_sonarqube-practice \
+                          -Dsonar.organization=milind-patle \
+                          -Dsonar.projectName=sonarqube-practice \
+                          -Dsonar.projectVersion=1.0 \
+                          -Dsonar.sources=. \
+                          -Dsonar.sourceEncoding=UTF-8 \
+                          -Dsonar.verbose=true
+                    """
+                }
+            }
+        }
+    }
+}
+
