@@ -1,29 +1,41 @@
 pipeline {
     agent any
 
-    environment {
-        PATH = "/opt/maven/bin:$PATH"
+    tools {
+        maven 'Maven-3.9.9'  // Make sure this is configured in Jenkins Global Tool Configuration
+        jdk 'Java-21'        // Make sure this is configured in Jenkins Global Tool Configuration
     }
 
     stages {
-        stage('Build') {
+        stage('Build & Test') {
             steps {
-                sh 'mvn clean install'
+                sh 'mvn clean compile test'
+            }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                }
             }
         }
 
         stage('SonarQube Analysis') {
-            environment {
-                scannerHome = tool 'SonarQube Scanner Tool' // Tool name configured in Jenkins -> Global Tool Configuration
-            }
             steps {
-                withSonarQubeEnv('SonarQubeScannerServer') { // Name configured under "Manage Jenkins -> Configure System -> SonarQube Servers"
-                    sh """
-                        ${scannerHome}/bin/sonar-scanner 	
-                    """
+                withSonarQubeEnv('SonarQubeScannerServer') {
+                    sh 'mvn sonar:sonar -Dsonar.projectKey=milind-patle_sonarqube-practice -Dsonar.organization=milind-patle'
                 }
             }
         }
     }
+    
+    post {
+        always {
+            echo 'Pipeline completed - check SonarQube dashboard for analysis results'
+        }
+        success {
+            echo 'Build and SonarQube analysis completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed - check logs for details'
+        }
+    }
 }
-
