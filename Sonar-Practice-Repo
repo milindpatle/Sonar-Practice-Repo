@@ -1,7 +1,7 @@
 sonar.verbose=true
 sonar.organization=milindpatle01
-sonar.projectKey=milind-patle_sonarqube-practice
-sonar.projectName=sonarqube-practice
+sonar.projectKey=milindpatle01_Sonar-Practice-Repo
+sonar.projectName=Sonar-Practice-Repo
 sonar.language=java
 sonar.sourceEncoding=UTF-8
 sonar.sources=.
