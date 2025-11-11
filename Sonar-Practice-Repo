@@ -1,5 +1,5 @@
 sonar.verbose=true
-sonar.organization=milind-patle
+sonar.organization=milindpatle01
 sonar.projectKey=milind-patle_sonarqube-practice
 sonar.projectName=sonarqube-practice
 sonar.language=java
