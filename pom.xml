@@ -75,6 +75,9 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
+        
+
+    
 
             <!-- Surefire plugin for testing -->
             <plugin>
